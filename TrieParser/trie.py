@@ -1,3 +1,5 @@
+__author__ = "Nikola"
+
 class Trie(object):
     """""
     Svaki node Trie drveta ima u sebi 45 referenci na sledece slovo (45 ovde jer ima 45 slova engleskog alfabeta + specijalnih znakova)
@@ -80,3 +82,14 @@ class Trie(object):
                 return
 
         print(node.value)
+
+    def findWord(self, word):
+        node = self
+        for char in word:
+            index = node.getTrieArrayIndexForChar(char)
+            if node.nextLetter[index] == None:
+                return -1
+            else:
+                node = node.nextLetter[index]
+
+        return node.value
