@@ -18,9 +18,9 @@ class Trie(object):
 
     def __init__(self):
         self.nextLetter = [None] * 45
-        self.value = 0
+        self.pages = []
 
-    def insertWord(self, word):
+    def insertWord(self, word, pageNum):
         node = self
         word = word.lower()
         for c in word:
@@ -31,12 +31,18 @@ class Trie(object):
                 " ASCII vrednost karaktera ukoliko je u pitanju specijalan znak 0-9 ili zagrade/crtice "
                 asciiValue = self.otherAsciiCharacter(c)
 
-            if (node.nextLetter[asciiValue] == None):
+            if node.nextLetter[asciiValue] is None:
                 node.nextLetter[asciiValue] = Trie()
             node = node.nextLetter[asciiValue]
 
-        "Value nam broji ponavljanje reci"
-        node.value += 1
+        """" 
+            Svaki node ima Array u kom se cuva broj ponavljanja te reci u svakom fajlu.
+            Svaki fajl ima svoj redni broj, i na tom rednom broju u okviru arraya se belezi broj ponavljanja.
+            Npr ako fajl HtmlTest1.html ima redni broj 6, u Array[5] ce se nalaziti broj ponavljanja reci "x".
+        """
+        while node.pages.__len__() < pageNum:
+            node.pages.append(0)
+        node.pages[pageNum-1] += 1
 
     def otherAsciiCharacter(self, char):
         " Specijalna funkcija koja odredjenim specijalnim karakterima dodeljuje mesto u nizu polja Trie "
@@ -63,33 +69,21 @@ class Trie(object):
         }
         return switcher.get(char, 0)
 
+    " Returns the custom ASCII value for the given character"
     def getTrieArrayIndexForChar(self, char):
         if ord(char) in range(ord('a'), ord('z')):
             return ord(char) - ord('a')
         else:
             return self.otherAsciiCharacter(char)
 
-    def printWordCount(self, word):
-        node = self
-        word = word.lower()
-
-        for char in word:
-            index = self.getTrieArrayIndexForChar(char)
-            if node.nextLetter[index] != None:
-                node = node.nextLetter[index]
-            else:
-                print("Rec '" + word + "' se ne pojavljuje u fajlovima.")
-                return
-
-        print(node.value)
-
-    def findWord(self, word):
+    " Returns array containing word occurrences for every page loaded, for the given word"
+    def findContainingPages(self, word):
         node = self
         for char in word:
             index = node.getTrieArrayIndexForChar(char)
             if node.nextLetter[index] == None:
-                return -1
+                return {}
             else:
                 node = node.nextLetter[index]
 
-        return node.value
+        return node.pages
