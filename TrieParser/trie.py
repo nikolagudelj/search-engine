@@ -17,73 +17,104 @@ class Trie(object):
     """
 
     def __init__(self):
-        self.nextLetter = [None] * 45
+        self.nextLetter = [None] * 26
         self.pages = []
 
     def insertWord(self, word, pageNum):
         node = self
         word = word.lower()
         for c in word:
-            if ord(c) in range(ord('a'), ord('z')):
-                " ASCII vrednost karaktera ukoliko je u pitanju slovo "
-                asciiValue = ord(c) - ord('a')
-            else:
-                " ASCII vrednost karaktera ukoliko je u pitanju specijalan znak 0-9 ili zagrade/crtice "
-                asciiValue = self.otherAsciiCharacter(c)
+            index = node.getArrayPosition(c, 1)
 
-            if node.nextLetter[asciiValue] is None:
-                node.nextLetter[asciiValue] = Trie()
-            node = node.nextLetter[asciiValue]
+            if node.nextLetter[index] is None:
+                node.nextLetter[index] = Trie()
+            node = node.nextLetter[index]
 
         """" 
             Svaki node ima Array u kom se cuva broj ponavljanja te reci u svakom fajlu.
             Svaki fajl ima svoj redni broj, i na tom rednom broju u okviru arraya se belezi broj ponavljanja.
             Npr ako fajl HtmlTest1.html ima redni broj 6, u Array[5] ce se nalaziti broj ponavljanja reci "x".
         """
-        while node.pages.__len__() < pageNum:
+        while node.pages.__len__() <= pageNum:
             node.pages.append(0)
-        node.pages[pageNum-1] += 1
+        node.pages[pageNum] += 1
 
-    def otherAsciiCharacter(self, char):
+    def getArrayPosition(self, char, flag):
         " Specijalna funkcija koja odredjenim specijalnim karakterima dodeljuje mesto u nizu polja Trie "
-        switcher = {
-            '1': 27,
-            '2': 28,
-            '3': 29,
-            '4': 30,
-            '5': 31,
-            '6': 32,
-            '7': 33,
-            '8': 34,
-            '9': 35,
-            '0': 36,
-            '.': 37,
-            ',': 38,
-            '(': 39,
-            ')': 40,
-            '[': 41,
-            ']': 42,
-            '/': 43,
-            '_': 44,
-            '-': 45,
-        }
-        return switcher.get(char, 0)
+        if ord(char) in range(ord('a'), ord('z') + 1):
+            return ord(char) - ord('a')
+        else:
+            index = 26
+            list_length = self.nextLetter.__len__()
+
+            while index < list_length:
+                if self.nextLetter[index].value == char:
+                    return index
+                index += 1
+
+            """ 
+                Flag nam sluzi da kazemo funkciji da li zelimo da kreiramo novi index, ili samo da proverimo da li "
+                zadati indeks postoji. 
+                flag == 0    ->  samo gledamo da li postoji 
+                flag == 1    ->  dodajemo dati indeks ako ne postoji
+            """
+            if flag == 0:
+                return -1
+            self.nextLetter.append(Trie())
+            self.nextLetter[index].value = char
+
+            #print("Trazili ste slovo " + char + " , ono je na indeksu " + str(index))
+            return index
 
     " Returns the custom ASCII value for the given character"
     def getTrieArrayIndexForChar(self, char):
-        if ord(char) in range(ord('a'), ord('z')):
-            return ord(char) - ord('a')
-        else:
-            return self.otherAsciiCharacter(char)
+        return self.getArrayPosition(char, 0)
 
-    " Returns array containing word occurrences for every page loaded, for the given word"
+    " Vraca niz intedzera, gde je svaki clan niza broj ponavljanja reci <word> na stranici ciji je to indeks"
     def findContainingPages(self, word):
         node = self
         for char in word:
             index = node.getTrieArrayIndexForChar(char)
-            if node.nextLetter[index] == None:
+            if index == -1:
+                return {}
+            if node.nextLetter[index] is None:
                 return {}
             else:
                 node = node.nextLetter[index]
 
         return node.pages
+
+    " Vraca ukupan broj pojavljivanja reci <word> u svim stranicama "
+    def getTotalWordCount(self, word):
+        node = self
+
+        for char in word:
+            index = node.getArrayPosition(char, 0)
+            if index == -1:
+                return 0
+            if node.nextLetter[index] is not None:
+                node = node.nextLetter[index]
+            else:
+                return 0
+        word_count = 0
+        for pageCount in node.pages:
+            word_count += pageCount
+
+        return word_count
+
+    " Vraca ukupan broj ponavljanja reci <word> u stranici oznacenoj brojem <pageNum>"
+    def getWordCountForPage(self, word, pageNum):
+        node = self
+
+        for char in word:
+            index = node.getArrayPosition(char, 0)
+            if index == -1:
+                return 0
+            if node.nextLetter[index] is not None:
+                node = node.nextLetter[index]
+            else:
+                return 0
+
+        if node.pages.__len__() < pageNum + 1:
+            return 0
+        return node.pages[pageNum]

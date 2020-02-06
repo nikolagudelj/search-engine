@@ -26,8 +26,9 @@ class HtmlLoader(object):
             Loop se ponavlja za svaki .html fajl dok ne popunimo drvo u potpunosti.
         """
 
-        file_counter = 0
-        for root, dirs, files in os.walk(path, topdown = False):
+        file_counter = -1
+        python_word_counter = 0
+        for root, dirs, files in os.walk(path, topdown = True):
             for filename in files:
                 if r".html" in filename:
                     file_counter += 1
@@ -37,10 +38,13 @@ class HtmlLoader(object):
                     parser.parse(os.path.join(root, filename))
                     print(filename + " " + str(parser.words.__len__()))
                     for word in parser.words:
+                        if word == "python":
+                            python_word_counter += 1
                         self.trie.insertWord(word, file_counter)
 
         end = time.time()
         print("Parsed files and loaded the Trie structure in " + str((end - start).__round__(2)) + " seconds.")
+        print("Python word occured " + str(python_word_counter) + " times.")
 
     def getDictionary(self):
         return self.dict
@@ -51,3 +55,9 @@ class HtmlLoader(object):
     """
     def getPageName(self, pageNum):
         return self.dict.get(pageNum)
+
+    def getPageNum(self, word):
+        for key in self.dict.keys():
+            if self.dict[key] == word:
+                return key
+        return -1
