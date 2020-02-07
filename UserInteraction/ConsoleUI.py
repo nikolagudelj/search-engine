@@ -3,37 +3,27 @@ from TrieParser.loadHtml import HtmlLoader
 """
     Console script which is used as a UI. 
     On initialization, it loads all the HTML files into a Trie structure.
-    After the initialization, it allows the user to command different search methods from the terminal.
+    After the initialization, it allows the user to run different search methods from the terminal.
 """
 class ConsoleUI(object):
 
     def __init__(self):
-        self.query = ""
-        self.pageOccurrences = []
         self.operator = -1
+        """ 
+            pageOccurrences keeps a reference to every trie.pages[] array that trie.findContainingPages() returns.
+            During filtering, we cycle through all the trie.pages[] arrays it contains.
+            1 array == 1 search word
+        """
+        self.pageOccurrences = []
+
         print("Loading HTML files...")
         self.htmlLoader = HtmlLoader()
         self.htmlLoader.loadTrieViaHTML()
 
-    def searchWord(self):
-        self.query = input("Enter a word to search: ")
-        self.searchTrieForWord(self.query.lower())
-
     """
-        Trazi rec u Trie drvetu, i vraca pageArray polje. 
-        Vraca niz imena stranica u kojima se pojavljuje data rec.
+        Displays the number of occurrences for the <word> in the <page>
+        <word> and <page> are input via console.
     """
-    def searchTrieForWord(self, word):
-        pageArray = self.htmlLoader.trie.findContainingPages(word)
-        page_counter = -1
-        for pageOccurrences in pageArray:
-            page_counter += 1
-            if pageOccurrences > 0:
-                print(self.htmlLoader.getPageName(page_counter) + " -> ocurrences: " + str(pageOccurrences))
-
-        print("Total occurences in Trie for word \"" + word + "\" = " + str(self.htmlLoader.trie.getTotalWordCount(word)))
-        return pageArray
-
     def searchPageForWord(self):
         pageName = input("Unesite stranicu za pretragu: ")
         pageNum = self.htmlLoader.getPageNum(pageName)
@@ -45,12 +35,23 @@ class ConsoleUI(object):
         word_occurrences = self.htmlLoader.trie.getWordCountForPage(word, pageNum)
         print("Rec \"" + word + "\" se javlja " + str(word_occurrences) + " puta.")
 
+    """
+        Parses the given query (e.g. "python AND programming") and divides it into <words> and an <operator>.
+        <operator> : AND, OR, NOT
+        Then proceeds to get a pages[] array for every <word> in query.
+        After gathering 1 pages[] array for every inputted word, it combines the given arrays
+        into one final binary array - resultPages[]. 
+        In resultPages the rule is the following:
+            resultsPages[pageNum] == 0  ->  page doesn't fit the query
+            resultsPages[pageNum] == 1  ->  page fits the query
+    """
     def parseQuery(self, query):
-        " Resetujemo postojeci beleznik pojavljivanja reci "
+        " We reset the current page occurrence array, to erase previous query results. "
         self.pageOccurrences = []
-        " Defaultni operator je OR "
+        " Default operator is OR. "
         self.operator = Operator.OR
         queryTokens = query.split(' ')
+
         for token in queryTokens:
             if token.lower() == "and":
                 self.operator = Operator.AND
@@ -58,13 +59,16 @@ class ConsoleUI(object):
                 self.operator = Operator.NOT
             elif token.lower() != "or":
                 pageOccurrenceArray = self.htmlLoader.trie.findContainingPages(token)
+                " If the given word doesn't appear in any of the files. "
                 if pageOccurrenceArray.__len__() == 0:
                     continue
+                " Array must be the same length as the number of pages in total. We append zeros if necessary"
                 while pageOccurrenceArray.__len__() < self.htmlLoader.dict.__len__():
                     pageOccurrenceArray.append(0)
+                " We add the resulting array to the list of arrays, for further filtering. "
                 self.pageOccurrences.append(pageOccurrenceArray)
 
-        resultPages = []
+        " Depending on the state of self.operator, we call an appropriate filter function. "
         if self.operator == Operator.OR:
             resultPages = self.OperationOR()
         elif self.operator == Operator.AND:
@@ -72,13 +76,20 @@ class ConsoleUI(object):
         else:
             resultPages = self.OperationNOT()
 
-        " Kada dobijemo odgovarajuci binarni niz, printujemo imena stranica koje imaju '1' na indeksu svog broja"
+        """ 
+            After getting the appropriate binary array, we print the names of pages that fit the query.
+            Given that a page is identified via pageNum, we check whether node.pages[pageNum] == 1 (if yes, we print it)
+        """
+        print("These are the pages that fit the query \"" + query + "\":")
         pageNum = -1
         for page in resultPages:
             pageNum += 1
             if page == 1:
                 print(self.htmlLoader.getPageName(pageNum))
 
+    """
+        3 functions for 3 operators (AND, OR, NOT). 
+    """
     def OperationOR(self):
         numberOfPages = self.htmlLoader.dict.__len__()
         resultPages = [0] * numberOfPages
@@ -120,13 +131,14 @@ class ConsoleUI(object):
         return resultPages
 
 
-" Klasa za flagovanje odgovarajuce operacije u queriju "
+" Enumeration class for easier identification of query operators. "
 class Operator(enumerate):
     OR = 0
     AND = 1
     NOT = 2
 
 
+" Runnable part of the application. "
 consoleUI = ConsoleUI()
 
 userInput = ""

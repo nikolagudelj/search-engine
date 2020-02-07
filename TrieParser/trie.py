@@ -2,18 +2,21 @@ __author__ = "Nikola"
 
 class Trie(object):
     """""
-    Svaki node Trie drveta ima u sebi 45 referenci na sledece slovo (45 ovde jer ima 45 slova engleskog alfabeta + specijalnih znakova)
-    Te reference su na kreaciji postavljene na None, tj nisu ucitane
-    Primera radi, ako hocemo da ucitamo rec JA u strukturu.
-        Prvo cemo referencu iz nextLetter niza, koja odgovara slovu J staviti da bude novi Trie() node.
-        Zatim se spustimo u referencu J, pa onda u njenom skupu nextLetter, kreiramo novi cvor na mestu
-        slova A, tako da vise nije None, vec novi Node.
-    Upotreba polja Value je trenutno da nam daje Word count odredjene reci.
-    Ovaj konkretan Trie objekat funkcionise za ASCII slova alfabeta, i za sledece znakove:
+        Every node of a Trie structure contains 26 references to the next Trie node. Every node represents 1 character.
+        These 26 base characters represent lower-case alphabetical characters (a-z).
+        The idea behind the implementation is that these 26 characters are the most common occurring ones, thus
+        by having them all exist at the same time, we know where each letter stands in the array, which in turn
+        allows us O(1) time complexity for access.
+        In case where we add a non-letter character to the Trie node, we resort to a simple for loop, which
+        starts at Trie.nextLetter[26] and loops until the end. If it finds the appropriate character, node becomes
+        node->thatCharacter. If it doesn't, a new Trie() is appended to the end of the Trie.nextLetter array.
 
-        0 1 2 3 4 5 6 7 8 9 . , [ ] ( ) _ -
-
-    Svi ostali znakovi su trenutno nepodrzani.
+        Within the node.pages[] array, we keep an integer for every .html page loaded. Each index corresponds to
+        a certain page (pages are numerated and kept in a Dictionary in pairs <pageNumber(0-N)>:<pageName>.
+        Therefore if we wish to see how many times a word "python" appears in page "index.html", we look in the dictionary
+        to see what is the pageNumber for the page "index.html". Say that number is 'k'. Then we go down the nodes
+        to match the word "python". In the 'N' node, we look at node.pages[k], to see how many times the word appears
+        in "index.html".
     """
 
     def __init__(self):
@@ -25,24 +28,26 @@ class Trie(object):
         word = word.lower()
         for c in word:
             index = node.getArrayPosition(c, 1)
-
-            if node.nextLetter[index] is None:
-                node.nextLetter[index] = Trie()
             node = node.nextLetter[index]
 
-        """" 
-            Svaki node ima Array u kom se cuva broj ponavljanja te reci u svakom fajlu.
-            Svaki fajl ima svoj redni broj, i na tom rednom broju u okviru arraya se belezi broj ponavljanja.
-            Npr ako fajl HtmlTest1.html ima redni broj 6, u Array[5] ce se nalaziti broj ponavljanja reci "x".
-        """
         while node.pages.__len__() <= pageNum:
             node.pages.append(0)
         node.pages[pageNum] += 1
 
     def getArrayPosition(self, char, flag):
-        " Specijalna funkcija koja odredjenim specijalnim karakterima dodeljuje mesto u nizu polja Trie "
+        """
+            Function which returns the index of a character in the Node.nextLetter array.
+            Flag parameter defines whether we want to CREATE a new node for a character (flag == 1), or
+            if we want to see if such a node exists (flag == 0)
+        """
         if ord(char) in range(ord('a'), ord('z') + 1):
-            return ord(char) - ord('a')
+            index = ord(char) - ord('a')
+            if self.nextLetter[index] is None:
+                if flag == 1:
+                    self.nextLetter[index] = Trie()
+                else:
+                    return -1
+            return index
         else:
             index = 26
             list_length = self.nextLetter.__len__()
@@ -52,39 +57,31 @@ class Trie(object):
                     return index
                 index += 1
 
-            """ 
-                Flag nam sluzi da kazemo funkciji da li zelimo da kreiramo novi index, ili samo da proverimo da li "
-                zadati indeks postoji. 
-                flag == 0    ->  samo gledamo da li postoji 
-                flag == 1    ->  dodajemo dati indeks ako ne postoji
-            """
+            " Flag determines whether we create a new node or not"
             if flag == 0:
                 return -1
             self.nextLetter.append(Trie())
             self.nextLetter[index].value = char
 
-            #print("Trazili ste slovo " + char + " , ono je na indeksu " + str(index))
             return index
 
-    " Returns the custom ASCII value for the given character"
+    " Returns the array index value for the given character. "
     def getTrieArrayIndexForChar(self, char):
         return self.getArrayPosition(char, 0)
 
-    " Vraca niz intedzera, gde je svaki clan niza broj ponavljanja reci <word> na stranici ciji je to indeks"
+    " Returns the node.pages[] for a given word parameter. "
     def findContainingPages(self, word):
         node = self
         for char in word:
             index = node.getTrieArrayIndexForChar(char)
             if index == -1:
                 return {}
-            if node.nextLetter[index] is None:
-                return {}
             else:
                 node = node.nextLetter[index]
 
         return node.pages
 
-    " Vraca ukupan broj pojavljivanja reci <word> u svim stranicama "
+    " Returns the total number of occurrences for <word> in ALL the parsed pages "
     def getTotalWordCount(self, word):
         node = self
 
@@ -92,17 +89,15 @@ class Trie(object):
             index = node.getArrayPosition(char, 0)
             if index == -1:
                 return 0
-            if node.nextLetter[index] is not None:
-                node = node.nextLetter[index]
-            else:
-                return 0
+            node = node.nextLetter[index]
+
         word_count = 0
         for pageCount in node.pages:
             word_count += pageCount
 
         return word_count
 
-    " Vraca ukupan broj ponavljanja reci <word> u stranici oznacenoj brojem <pageNum>"
+    " Returns total word count for <word> in the page identified via <pageNum> "
     def getWordCountForPage(self, word, pageNum):
         node = self
 
@@ -110,10 +105,7 @@ class Trie(object):
             index = node.getArrayPosition(char, 0)
             if index == -1:
                 return 0
-            if node.nextLetter[index] is not None:
-                node = node.nextLetter[index]
-            else:
-                return 0
+            node = node.nextLetter[index]
 
         if node.pages.__len__() < pageNum + 1:
             return 0
