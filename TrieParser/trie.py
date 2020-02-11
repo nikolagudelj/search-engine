@@ -27,26 +27,22 @@ class Trie(object):
         node = self
         word = word.lower()
         for c in word:
-            index = node.getArrayPosition(c, 1)
+            index = node.getAddPosition(c)
             node = node.nextLetter[index]
 
         while node.pages.__len__() <= pageNum:
             node.pages.append(0)
         node.pages[pageNum] += 1
 
-    def getArrayPosition(self, char, flag):
+    def getAddPosition(self, char):
         """
             Function which returns the index of a character in the Node.nextLetter array.
-            Flag parameter defines whether we want to CREATE a new node for a character (flag == 1), or
-            if we want to see if such a node exists (flag == 0)
+            If the indexed array position doesn't exist, we create it.
         """
         if ord(char) in range(ord('a'), ord('z') + 1):
             index = ord(char) - ord('a')
             if self.nextLetter[index] is None:
-                if flag == 1:
-                    self.nextLetter[index] = Trie()
-                else:
-                    return -1
+                self.nextLetter[index] = Trie()
             return index
         else:
             index = 26
@@ -57,23 +53,35 @@ class Trie(object):
                     return index
                 index += 1
 
-            " Flag determines whether we create a new node or not"
-            if flag == 0:
-                return -1
             self.nextLetter.append(Trie())
             self.nextLetter[index].value = char
 
             return index
 
-    " Returns the array index value for the given character. "
-    def getTrieArrayIndexForChar(self, char):
-        return self.getArrayPosition(char, 0)
+    " Gets index of an array element if it exists."
+    " Returns <index> or <-1> "
+    def getIndex(self, char):
+        if ord(char) in range(ord('a'), ord('z') + 1):
+            index = ord(char) - ord('a')
+            if self.nextLetter[index] is not None:
+                return index
+            else:
+                return -1
+        else:
+            index = 26
+            list_length = self.nextLetter.__len__()
+
+            while index < list_length:
+                if self.nextLetter[index].value == char:
+                    return index
+                index += 1
+            return -1
 
     " Returns the node.pages[] for a given word parameter. "
     def findContainingPages(self, word):
         node = self
         for char in word:
-            index = node.getTrieArrayIndexForChar(char)
+            index = node.getIndex(char)
             if index == -1:
                 return {}
             else:
@@ -86,7 +94,7 @@ class Trie(object):
         node = self
 
         for char in word:
-            index = node.getArrayPosition(char, 0)
+            index = node.getIndex(char)
             if index == -1:
                 return 0
             node = node.nextLetter[index]
@@ -102,7 +110,7 @@ class Trie(object):
         node = self
 
         for char in word:
-            index = node.getArrayPosition(char, 0)
+            index = node.getIndex(char)
             if index == -1:
                 return 0
             node = node.nextLetter[index]

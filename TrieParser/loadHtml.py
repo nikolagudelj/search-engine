@@ -38,7 +38,6 @@ class HtmlLoader(object):
                     self.dict[file_counter] = full_filename
 
                     parser.parse(full_filename)
-                    print(filename + " " + str(parser.words.__len__()))
                     for word in parser.words:
                         self.trie.insertWord(word, file_counter)
 

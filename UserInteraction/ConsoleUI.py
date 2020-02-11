@@ -1,3 +1,5 @@
+__author__ = "Nikola"
+
 from TrieParser.loadHtml import HtmlLoader
 
 """
@@ -85,11 +87,10 @@ class ConsoleUI(object):
         for page in resultPages:
             pageNum += 1
             if page == 1:
-                print(self.htmlLoader.getPageName(pageNum))
+                print("\t" + self.htmlLoader.getPageName(pageNum))
+        print()
 
-    """
-        3 functions for 3 operators (AND, OR, NOT). 
-    """
+    " 3 functions for 3 operators (AND, OR, NOT). "
     def OperationOR(self):
         numberOfPages = self.htmlLoader.dict.__len__()
         resultPages = [0] * numberOfPages
@@ -123,7 +124,7 @@ class ConsoleUI(object):
             for occurrence in self.pageOccurrences:
                 counter += 1
                 flags[counter] = occurrence[pageIndex]
-            if flags[0] == 1 and flags[1] == 0:
+            if flags[0] > 0 and flags[1] == 0:
                 resultPages[pageIndex] = 1
             else:
                 resultPages[pageIndex] = 0
