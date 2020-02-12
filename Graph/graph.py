@@ -38,6 +38,9 @@ class Graph:
         def element(self):
             return self._element
 
+        def destination(self):
+            return self._destination
+
         def __hash__(self):  # will allow edge to be a map/set key
             return hash((self._origin, self._destination))
 
@@ -85,9 +88,11 @@ class Graph:
 
     def incident_edges(self, v, outgoing=True):
         self._validate_vertex(v)
+        ret = []
         adj = self._outgoing if outgoing else self._incoming
         for edge in adj[v].values():
-            yield edge
+            ret.append(edge)
+        return ret
 
     def insert_vertex(self, v):
         self._outgoing[v] = {}

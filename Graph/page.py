@@ -1,7 +1,7 @@
 class Page:
-    vertex = None  # Vertex objekat
-    links = []     # Lista stringova koja predstavlja stranice na koje cvor upucuje
+    path = None    # Path of the page
+    links = []     # List of links the page refers to
 
-    def __init__(self, vertex, links):
-        self.vertex = vertex
+    def __init__(self, path, links):
+        self.path = path
         self.links = links
