@@ -41,6 +41,9 @@ class Graph:
         def destination(self):
             return self._destination
 
+        def origin(self):
+            return self._origin
+
         def __hash__(self):  # will allow edge to be a map/set key
             return hash((self._origin, self._destination))
 
