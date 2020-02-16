@@ -1,3 +1,6 @@
+from TrieParser.HtmlLoader import HtmlLoader
+
+
 class Set:
 
     """
@@ -21,6 +24,7 @@ class Set:
             ret.add(element)
         for element in other.set.keys():
             ret.add(element)
+        return ret
 
     """
         Intersection of two sets. Returns a new set. Usage: intersection = A & B where A and B are sets
@@ -33,12 +37,12 @@ class Set:
         return ret
 
     """
-        Complement of a set. Returns a new set. Requires the universal set as argument.
+        Complement of a set. Returns a new set. 'X' must exist in Set1, and not exist in Set2
     """
-    def complement(self, universal_set):
+    def complement(self, other):
         ret = Set()
-        for element in universal_set:
-            if element not in self.set.keys():
+        for element in self.set.keys():
+            if element not in other.set.keys():
                 ret.add(element)
         return ret
 
@@ -48,3 +52,14 @@ class Set:
     def print_set(self):
         for element in self.set.keys():
             print(element)
+
+
+def arrayToSet(loader, array):
+    ret = Set()
+    page_counter = 0
+    for pageOccurrence in array:
+        if pageOccurrence > 0:
+            page_name = loader.getPageName(page_counter)
+            ret.add(page_name)
+        page_counter += 1
+    return ret

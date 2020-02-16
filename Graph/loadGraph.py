@@ -3,7 +3,11 @@ from Graph.graph import Graph
 from Graph.page import Page
 from TrieParser.parser import Parser
 
-
+"""
+    Potentially redundant class!
+    Graph loading has been moved to HtmlLoader class, to prevent double parsing.
+    
+"""
 class GraphLoader:
 
     def __init__(self):
@@ -12,8 +16,8 @@ class GraphLoader:
 
     def load_graph(self):
         parser = Parser()
-        #path = "C:\\Users\\Gudli\\Desktop\\OISISI Drugi projekat\\python-2.7.7-docs-html"
-        path =  "C:\\Users\\Asus\\Desktop\\Projekat_Python\\python-2.7.7-docs-html"
+        path = "C:\\Users\\Gudli\\Desktop\\OISISI Drugi projekat\\python-2.7.7-docs-html"
+        #path =  "C:\\Users\\Asus\\Desktop\\Projekat_Python\\python-2.7.7-docs-html"
 
         """
             For each html file in the specified directory, a new object which represents an html page and all the pages
@@ -36,9 +40,8 @@ class GraphLoader:
             Looping through the list of html pages and creating edges between the current page and the pages it links to
         """
         for page in self.pages:
-            if len(page.links) != 0:
-                for link in page.links:
-                    self.graph.insert_edge(Graph.Vertex(page.path), Graph.Vertex(link))
+            for link in page.links:
+                self.graph.insert_edge(Graph.Vertex(page.path), Graph.Vertex(link))
 
     def get_graph(self):
         return self.graph

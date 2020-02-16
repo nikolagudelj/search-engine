@@ -7,7 +7,7 @@ class Graph:
 
         def element(self):
             return self._element
-
+        
         def __hash__(self):
             return hash(self._element)
 
