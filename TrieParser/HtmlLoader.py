@@ -15,39 +15,37 @@ class HtmlLoader(object):
         self.graph = Graph()
         self.pages = []
         self.dict = {}      # Dictionary is used to keep record of pages, in the format <PageNumber>:<PageName>
+        self.files = []
 
-    def loadTrieViaHTML(self):
+    def loadTrieViaHTML(self, path):
         parser = Parser()
 
-        path = "C:\\Users\\Gudli\\Desktop\\OISISI Drugi projekat\\python-2.7.7-docs-html"
+        # path koji se unosi ne mora imati duple backslashove.
+        #path = "C:\\Users\\Gudli\\Desktop\\OISISI Drugi projekat\\python-2.7.7-docs-html"
         #path =  "C:\\Users\\Asus\\Desktop\\Projekat_Python\\python-2.7.7-docs-html"
 
         start = time.time()
         """
-            OS.Walk() runs through the whole given directory and loads filenames. 
-            Then using the os.path.join(root, filename), we are able to get the full path for every .html page.
-            Each filename is passed onto the parser, which parses it, and creates a String array <parser.words>, 
-            which stores all the words from a single file.
-            We then loop through <parser.words> and insert every single one into the Trie structure.
-            Every Page object (pagename, links) is stored in an array, which is then used to create a Graph structure
-            which shows how all the pages are interconnected.
+            By using 'self.getAllFiles(path), we collect the absolute paths for every '.html' file in the given
+            directory. Paths are kept within the list 'self.files'. 
+            Using a for loop and a parser, we iterate through the list, and parse every file, add its words
+            to the Trie structure, and subsequently build a Graph.
         """
 
         page_counter = -1
-        for root, dirs, files in os.walk(path, topdown=True):
-            for filename in files:
-                if r".html" in filename:
-                    page_counter += 1
-                    full_pagename = os.path.join(root, filename)     # Link a page name to a number in a dictionary
-                    self.dict[page_counter] = full_pagename
+        self.getHtmlFiles(path)
 
-                    parser.parse(full_pagename)                      # Parse the page at the given path
+        for file in self.files:
+            page_counter += 1
+            self.dict[page_counter] = file
 
-                    page = Page(full_pagename, parser.links)         # Create a new Page object to be used for Graphing
-                    self.pages.append(page)
+            parser.parse(file)                      # Parse the page at the given path
 
-                    for word in parser.words:                   # Insert every word from the page into Trie
-                        self.trie.insertWord(word, page_counter)
+            page = Page(file, parser.links)         # Create a new Page object to be used for Graphing
+            self.pages.append(page)
+
+            for word in parser.words:                   # Insert every word from the page into Trie
+                self.trie.insertWord(word, page_counter)
 
         " Graph creation below: "
         " Creating a Vertex for every page "
@@ -78,3 +76,12 @@ class HtmlLoader(object):
             if self.dict[key] == pageName:
                 return key
         return -1
+
+    " Iterates through all the files and subfolders in the given path folder, and adds .html file names to self.files "
+    def getHtmlFiles(self, path):
+        for file in os.scandir(path):
+            filepath = file.path
+            if file.name.endswith('html'):
+                self.files.append(filepath)
+            elif file.is_dir():
+                self.getHtmlFiles(filepath)

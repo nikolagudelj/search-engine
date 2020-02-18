@@ -1,5 +1,7 @@
 __author__ = "Nikola"
 
+from os import path
+
 from TrieParser.HtmlLoader import HtmlLoader
 from Set.set import arrayToSet
 
@@ -18,9 +20,10 @@ class ConsoleUI(object):
 
     def __init__(self):
         self.operator = -1
+        self.path = inputPath()
         print("Loading HTML files...")
         self.htmlLoader = HtmlLoader()
-        self.htmlLoader.loadTrieViaHTML()
+        self.htmlLoader.loadTrieViaHTML(self.path)
         """ 
            pageOccurrences keeps a reference to every trie.pages[] array that trie.findContainingPages() returns.
            During filtering, we cycle through all the trie.pages[] arrays it contains.
@@ -54,6 +57,15 @@ class ConsoleUI(object):
         else:
             result_set = _set1.complement(_set2)
         return result_set
+
+
+def inputPath():
+    while True:
+        absolute_path = input("Enter the absolute path to your folder: ")
+        if not path.exists(absolute_path):
+            print("Path does not exist!")
+        else:
+            return absolute_path
 
 
 " Runnable part of the application. "
