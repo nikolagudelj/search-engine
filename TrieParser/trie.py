@@ -1,5 +1,6 @@
 __author__ = "Nikola"
 
+
 class Trie(object):
     """""
         Every node of a Trie structure contains 26 references to the next Trie node. Every node represents 1 character.
