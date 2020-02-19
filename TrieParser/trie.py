@@ -104,3 +104,17 @@ class Trie(object):
             word_count += pageCount
 
         return word_count
+
+    " Returns total word count for <word> in the page identified via <pageNum> "
+    def getWordCountForPage(self, word, pageNum):
+        node = self
+
+        for char in word:
+            index = node.getIndex(char)
+            if index == -1:
+                return 0
+            node = node.nextLetter[index]
+
+        if node.pages.__len__() < pageNum + 1:
+            return 0
+        return node.pages[pageNum]
