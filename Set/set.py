@@ -1,6 +1,3 @@
-from TrieParser.HtmlLoader import HtmlLoader
-
-
 class Set:
 
     """

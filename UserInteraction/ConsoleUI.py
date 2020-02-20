@@ -4,6 +4,7 @@ from os import path
 
 from TrieParser.HtmlLoader import HtmlLoader
 from Set.set import arrayToSet
+from PageRank.rank import page_rank
 
 " Enumeration class for easier identification of query operators. "
 class Operator(enumerate):
@@ -34,6 +35,7 @@ class ConsoleUI(object):
     def parseQuery(self, query):
         self.pageOccurrences.clear()        # clear the list of any previous queries
         tokens = query.split(" ")
+        words = []
         self.operator = Operator.OR         # default operator is OR
         for token in tokens:
             if token.lower() == 'and':
@@ -41,11 +43,14 @@ class ConsoleUI(object):
             elif token.lower() == 'not':
                 self.operator = Operator.NOT
             elif token.lower() != 'or':
+                words.append(token)
                 pages = self.htmlLoader.trie.findContainingPages(token.lower())
                 _set = arrayToSet(self.htmlLoader, pages)
                 self.pageOccurrences.append(_set)
         result_set = self.executeQuery()
-        result_set.print_set()
+        ranks = page_rank(30, self.htmlLoader.pages, self.htmlLoader.graph, self.htmlLoader, words, result_set)
+        self.print_ranks(ranks)
+
 
     def executeQuery(self):
         _set1 = self.pageOccurrences[0]
@@ -57,6 +62,40 @@ class ConsoleUI(object):
         else:
             result_set = _set1.complement(_set2)
         return result_set
+
+    def print_ranks(self, ranks):
+        i = len(ranks) - 1
+        rem = len(ranks)
+        print("Number of pages in result set: " + str(rem))
+        num_of_pages = 0
+        while True:
+            try:
+                num_of_pages = int(input("Enter the number of pages you would like to display: "))
+                break
+            except:
+                print("Please enter an integer!")
+
+        while num_of_pages > 0:
+            if num_of_pages > rem:
+                num_of_pages = rem
+            if num_of_pages == 0:
+                break
+            print(str(num_of_pages) + " pages showing")
+            for j in range(0, num_of_pages):
+                print(ranks[i][0] + " " + str(ranks[i][1]))
+                i -= 1
+            rem -= num_of_pages
+            print(str(rem) + " pages left")
+            if rem > 0:
+                while True:
+                    try:
+                        num_of_pages = int(input("Enter the number of pages you would like to display (0 for exit): "))
+                        break
+                    except:
+                        print("Please enter an integer!")
+            else:
+                break
+        print("Finished displaying pages.")
 
 
 def inputPath():
