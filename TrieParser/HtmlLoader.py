@@ -3,10 +3,11 @@ __author__ = "Nikola"
 import os
 import time
 
-from TrieParser.parser import Parser
-from TrieParser.trie import Trie
 from Graph.graph import Graph
 from Graph.page import Page
+from TrieParser.parser import Parser
+from TrieParser.trie import Trie
+
 
 class HtmlLoader(object):
 
@@ -21,8 +22,8 @@ class HtmlLoader(object):
         parser = Parser()
 
         # path koji se unosi ne mora imati duple backslashove.
-        #path = "C:\\Users\\Gudli\\Desktop\\OISISI Drugi projekat\\python-2.7.7-docs-html"
-        #path =  "C:\\Users\\Asus\\Desktop\\Projekat_Python\\python-2.7.7-docs-html"
+        #path = t"C:\Users\Gudli\Desktop\OISISI Drugi projekat\python-2.7.7-docs-html"
+        #path =  "C:\Users\Asus\Desktop\Projekat_Python\python-2.7.7-docs-html"
 
         start = time.time()
         """

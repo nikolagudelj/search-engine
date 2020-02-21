@@ -1,7 +1,7 @@
 import time
-from Graph.graph import Graph
 from math import log
 
+from Graph.graph import Graph
 
 """
     This is an iterative algorithm used for ranking html pages. Initially, all pages are ranked 1/n, where n is the total number

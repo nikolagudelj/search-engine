@@ -1,4 +1,5 @@
 import os
+
 from Graph.graph import Graph
 from Graph.page import Page
 from TrieParser.parser import Parser

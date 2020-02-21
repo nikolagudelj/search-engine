@@ -1,8 +1,6 @@
 class Set:
 
-    """
-        Set is implemented as a dictionary where the keys are actually set's elements because accessing keys takes O(1) time.
-    """
+    "Set is implemented as a dictionary where the keys are actually set's elements because accessing keys takes O(1) time. "
     def __init__(self):
         self.set = {}
 
@@ -12,9 +10,7 @@ class Set:
     def add(self, element):
         self.set[element] = None
 
-    """
-        Union of two sets. Returns a new set. Usage: union = A | B where A and B are sets
-    """
+    " Union of two sets. Returns a new set. Usage: union = A | B where A and B are sets "
     def __or__(self, other):
         ret = Set()
         for element in self.set.keys():
@@ -23,9 +19,7 @@ class Set:
             ret.add(element)
         return ret
 
-    """
-        Intersection of two sets. Returns a new set. Usage: intersection = A & B where A and B are sets
-    """
+    "Intersection of two sets. Returns a new set. Usage: intersection = A & B where A and B are sets "
     def __and__(self, other):
         ret = Set()
         for element in self.set.keys():
@@ -33,15 +27,18 @@ class Set:
                 ret.add(element)
         return ret
 
-    """
-        Complement of a set. Returns a new set. 'X' must exist in Set1, and not exist in Set2
-    """
+    "Complement of a set. Returns a new set. 'X' must exist in Set1, and not exist in Set2 "
     def complement(self, other):
         ret = Set()
         for element in self.set.keys():
             if element not in other.set.keys():
                 ret.add(element)
         return ret
+
+    def complementUniversal(self, loader):
+        file_list = [1] * loader.files.__len__()
+        universal_set = arrayToSet(loader, file_list)
+        return universal_set.complement(self)
 
     def exists(self, element):
         return element in self.set.keys()
