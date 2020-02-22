@@ -1,5 +1,7 @@
 __author__ = "Nikola"
 
+from Set.set import Set
+
 
 class PolishNotation(object):
     """
@@ -7,16 +9,18 @@ class PolishNotation(object):
         It's duty is to use the given notation (in array form) and return the proper Set as a result.
     """
 
-    def __init__(self, polish_expression, loader):
-        self.expression = polish_expression
+    def __init__(self, loader):
+        self.expression = []
         self.loader = loader
 
-    def calculateResultSet(self):
+    def calculateResultSet(self, expression):
+        self.expression = expression
         index = 0
+
         while index < self.expression.__len__():
             if not isOperator(self.expression[index]):      # Word token is skipped
                 index += 1
-            elif isComplement(self.expression[index]):      # ! token is unary, so we work with [index-1] set
+            elif isComplementOperator(self.expression[index]):      # ! token is unary, so we work with [index-1] set
                 set1 = self.expression[index-1]
                 set1 = set1.complementUniversal(self.loader)
                 self.expression[index-1] = set1
@@ -27,7 +31,7 @@ class PolishNotation(object):
                 set2 = self.expression[index-2]
                 operator = self.expression[index]
 
-                self.expression[index - 2] = calculate(set1, set2, operator)
+                self.expression[index - 2] = calculateBinary(set1, set2, operator)
                 self.expression.pop(index)
                 self.expression.pop(index-1)
                 index -= 2
@@ -35,7 +39,7 @@ class PolishNotation(object):
         return self.expression[0]                    # Reverse-polish is finished when the expression converges to 1 set
 
 
-def calculate(set1, set2, operator):
+def calculateBinary(set1, set2, operator):
     if operator == '&&':
         return set1.__and__(set2)
     if operator == '||':
@@ -52,7 +56,7 @@ def isOperator(exp):
     return False
 
 
-def isComplement(exp):
+def isComplementOperator(exp):
     if exp == '!':
         return True
     return False

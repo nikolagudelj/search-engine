@@ -14,19 +14,18 @@ class ComplexParser(object):
                 ~ Spaces between tokens are necessary.
     """
 
-    def __init__(self, query, loader):
-        self.query = query
+    def __init__(self, loader):
         self.output = []
         self.stack = []
         self.loader = loader
 
-    def parseQuery(self):
+    def parseQuery(self, query):
         """
             Parses the complex query. Word tokens are pushed to the self.output (later used by PolishNotation object)
             Operator tokens need to behave according to the algorithm rules, which are defined in the pushOperator()
             function. After the function, self.output contains an array-like expression in Reverse-Polish form.
         """
-        tokens = self.query.split(" ")
+        tokens = query.split(" ")
         for token in tokens:
             if not isOperator(token):
                 _list = self.loader.trie.findContainingPages(token)

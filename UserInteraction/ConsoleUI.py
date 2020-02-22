@@ -111,18 +111,18 @@ def inputPath():
 
 " Runnable part of the application. "
 consoleUI = ConsoleUI()
+complexParser = ComplexParser(consoleUI.htmlLoader)
+polishNotation = PolishNotation(consoleUI.htmlLoader)
 
 userInput = ""
 
 while userInput != 'Q':
     query = input("Search (double space for complex query): ")
     if not query.startswith("  "):
-        consoleUI.parseQuery(query)
+        consoleUI.parseQuery(query)     # Regular search
     else:
-        complexParser = ComplexParser(query.strip(), consoleUI.htmlLoader)
-        complexParser.parseQuery()
-        polishNotation = PolishNotation(complexParser.output, consoleUI.htmlLoader)
-        _resultSet = polishNotation.calculateResultSet()
+        complexParser.parseQuery(query.strip())     # If query starts with double space, do a complex search
+        _resultSet = polishNotation.calculateResultSet(complexParser.output)
         _resultSet.print_set()
 
     print("Press Q to exit, or any button to repeat search: ", end="")
