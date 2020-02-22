@@ -1,29 +1,31 @@
 __author__ = "Nikola"
 
-from os import path
 
+from Misc.Config import Config
 from ComplexQuery.ComplexParser import ComplexParser
 from ComplexQuery.PolishNotation import PolishNotation
 from PageRank.rank import page_rank
 from Set.set import arrayToSet
 from TrieParser.HtmlLoader import HtmlLoader
 
-" Enumeration class for easier identification of query operators. "
+
 class Operator(enumerate):
+    """ Enumeration class for easier identification of query operators. """
     OR = 0
     AND = 1
     NOT = 2
 
-"""
-    Console script which is used as a UI. 
-    On initialization, it loads all the HTML files into a Trie structure and creates a Graph
-    After the initialization, it allows the user to run different search methods from the terminal.
-"""
+
 class ConsoleUI(object):
+    """
+        Console script which is used as a UI.
+        On initialization, it loads all the HTML files into a Trie structure and creates a Graph
+        After the initialization, it allows the user to run different search methods from the terminal.
+    """
 
     def __init__(self):
         self.operator = -1
-        self.path = inputPath()
+        self.path = Config.inputPath()
         print("Loading HTML files...")
         self.htmlLoader = HtmlLoader()
         self.htmlLoader.loadTrieViaHTML(self.path)
@@ -35,78 +37,56 @@ class ConsoleUI(object):
         self.pageOccurrences = []
 
     def parseQuery(self, query):
+        operator_counter = 0
+        token_counter = 0
         self.pageOccurrences.clear()        # clear the list of any previous queries
+
         tokens = query.split(" ")
         words = []
         self.operator = Operator.OR         # default operator is OR
+
         for token in tokens:
+            token_counter += 1
             if token.lower() == 'and':
+                operator_counter += 1
+                if Config.isGreater(operator_counter, 1) or token_counter == tokens.__len__():
+                    print("Incorrect expression.")
+                    return
                 self.operator = Operator.AND
             elif token.lower() == 'not':
+                operator_counter += 1
+                if Config.isGreater(operator_counter, 1) or token_counter == tokens.__len__():
+                    print("Incorrect expression.")
+                    return
                 self.operator = Operator.NOT
-            elif token.lower() != 'or':
+            elif token.lower() == 'or':
+                operator_counter += 1
+                if Config.isGreater(operator_counter, 1) or token_counter == tokens.__len__():
+                    print("Incorrect expression.")
+                    return
+            else:
                 words.append(token)
                 pages = self.htmlLoader.trie.findContainingPages(token.lower())
                 _set = arrayToSet(self.htmlLoader, pages)
                 self.pageOccurrences.append(_set)
         result_set = self.executeQuery()
-        ranks = page_rank(10, self.htmlLoader.pages, self.htmlLoader.graph, self.htmlLoader, words, result_set)
-        print_ranks(ranks)
+        ranks = page_rank(5, self.htmlLoader.pages, self.htmlLoader.graph, self.htmlLoader, words, result_set)
+        Config.print_ranks(ranks)
 
     def executeQuery(self):
         _set1 = self.pageOccurrences[0]
+        if self.operator == Operator.NOT:
+            if self.pageOccurrences.__len__() != 1:     # "not python"
+                _set2 = self.pageOccurrences[1]
+                return _set1.complement(_set2)
+            else:                                       # "python not module"
+                return _set1.complementUniversal(self.htmlLoader)
+
         _set2 = self.pageOccurrences[1]
-        if self.operator == Operator.OR:
-            result_set = _set1.__or__(_set2)
-        elif self.operator == Operator.AND:
-            result_set = _set1.__and__(_set2)
-        else:
-            result_set = _set1.complement(_set2)
-        return result_set
-
-
-def print_ranks(ranks):
-    i = len(ranks) - 1
-    rem = len(ranks)
-    print("Number of pages in result set: " + str(rem))
-    num_of_pages = 0
-    while True:
-        try:
-            num_of_pages = int(input("Enter the number of pages you would like to display: "))
-            break
-        except:
-            print("Please enter an integer!")
-
-    while num_of_pages > 0:
-        if num_of_pages > rem:
-            num_of_pages = rem
-        if num_of_pages == 0:
-            break
-        print(str(num_of_pages) + " pages showing")
-        for j in range(0, num_of_pages):
-            print(ranks[i][0] + " " + str(ranks[i][1]))
-            i -= 1
-        rem -= num_of_pages
-        print(str(rem) + " pages left")
-        if rem > 0:
-            while True:
-                try:
-                    num_of_pages = int(input("Enter the number of pages you would like to display (0 for exit): "))
-                    break
-                except:
-                    print("Please enter an integer!")
-        else:
-            break
-    print("Finished displaying pages.")
-
-
-def inputPath():
-    while True:
-        absolute_path = input("Enter the absolute path to your folder: ")
-        if not path.exists(absolute_path):
-            print("Path does not exist!")
-        else:
-            return absolute_path
+        if self.operator == Operator.OR:                # "python or module"
+            return _set1.__or__(_set2)
+        elif self.operator == Operator.AND:             # "python and module"
+            return _set1.__and__(_set2)
 
 
 " Runnable part of the application. "
@@ -123,7 +103,10 @@ while userInput != 'Q':
     else:
         complexParser.parseQuery(query.strip())     # If query starts with double space, do a complex search
         _resultSet = polishNotation.calculateResultSet(complexParser.output)
-        _resultSet.print_set()
+        if _resultSet != -1:
+            _resultSet.print_set()
+        else:
+            print("No resulting set available.")
 
     print("Press Q to exit, or any button to repeat search: ", end="")
     userInput = input()

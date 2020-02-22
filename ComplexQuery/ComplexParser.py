@@ -1,6 +1,7 @@
 __author__ = "Nikola"
 
 from ComplexQuery.PolishNotation import isOperator
+from Misc.Config import Config
 from Set.set import arrayToSet
 
 
@@ -25,6 +26,7 @@ class ComplexParser(object):
             Operator tokens need to behave according to the algorithm rules, which are defined in the pushOperator()
             function. After the function, self.output contains an array-like expression in Reverse-Polish form.
         """
+        query = Config.removeTrailingOperators(query)
         tokens = query.split(" ")
         for token in tokens:
             if not isOperator(token):

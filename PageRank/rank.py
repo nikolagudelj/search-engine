@@ -56,6 +56,7 @@ def page_rank(max_iter, pages, graph, htmlLoader, words, result_set):
 
     return sort_ranks(rank, result_set)
 
+
 def sort_ranks(rank, result_set):
     rank_list = []
     for key in result_set.set:
