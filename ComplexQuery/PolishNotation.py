@@ -1,7 +1,5 @@
 __author__ = "Nikola"
 
-from Set.set import Set
-
 
 class PolishNotation(object):
     """
@@ -14,6 +12,11 @@ class PolishNotation(object):
         self.loader = loader
 
     def calculateResultSet(self, expression):
+        """
+            Takes the expression in the form of an array, containing sets and operators, in the Reverse-Polish form.
+            Iterates through the array and calculates the resulting set.
+            Example of an array expression is: [set('python') set('java') &&], for initial query 'python && java'
+        """
         self.expression = expression
         index = 0
         try:
@@ -44,6 +47,7 @@ class PolishNotation(object):
 
 
 def calculateBinary(set1, set2, operator):
+    """ Calculates the resulting set for a binary operation (set1 bin_op set2). Returns the resulting set. """
     if operator == '&&':
         return set1.__and__(set2)
     if operator == '||':
@@ -51,6 +55,7 @@ def calculateBinary(set1, set2, operator):
 
 
 def isOperator(exp):
+    """ Checks whether a token is an operator. Returns true if token = [&& || ( ) !] """
     if exp == '&&': return True
     if exp == '||': return True
     if exp == '!' : return True

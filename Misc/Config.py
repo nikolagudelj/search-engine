@@ -1,11 +1,13 @@
 import sys
-from msvcrt import kbhit, getch
 from os import path
 
 
 class Config(object):
     @staticmethod
     def print_ranks(ranks):
+        """
+            Comment missing.
+        """
         i = len(ranks) - 1
         rem = len(ranks)
         print("Number of pages in result set: " + str(rem))
@@ -41,6 +43,11 @@ class Config(object):
 
     @staticmethod
     def inputPath():
+        """
+            Asks the user for a string-input path to the selected '.html' files directory.
+            For every input, checks whether the specified folder exists. If not, it asks for input again.
+            Returns a valid absolute path string.
+        """
         while True:
             absolute_path = input("Enter the absolute path to your folder: ")
             sys.stdin.buffer.flush()
@@ -51,6 +58,11 @@ class Config(object):
 
     @staticmethod
     def removeTrailingOperators(query):
+        """
+            Prevents incorrect complex query input such as "! python && ||" by removing all the trailing operators
+            after the last word token (works with infix form, so operators that are not between 2 words, are not valid)
+            For input the above-mentioned input, returns "! python", incorrect operators are
+        """
         last_word_index = -1
         for index in range(0, query.__len__()):
             if not Config.isOperator(query[index]):
@@ -61,9 +73,11 @@ class Config(object):
 
     @staticmethod
     def isOperator(char):
-        return char in ['|', '&', '!', '(', ')', ' ']
+        """ Checks whether a character is one of the following: ! & ! ( ) \\s  """
+        return char in ['|', '&', '!', ' ']
 
     @staticmethod
     def isGreater(num, limit):
+        """ Checks whether the first integer argument is greater than the second. Returns boolean value. """
         if num > limit: return True
         return False

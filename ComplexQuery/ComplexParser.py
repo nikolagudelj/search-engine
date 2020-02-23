@@ -11,7 +11,7 @@ class ComplexParser(object):
         Resulting polish-notation array is then used to calculate the resulting set, using the class
         PolishNotation.
         Correct format example is:
-            python && java || ( clojure && !sql )
+            python && java || ( clojure && ! sql )
                 ~ Spaces between tokens are necessary.
     """
 

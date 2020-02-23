@@ -7,12 +7,13 @@ from Graph.graph import Graph
 from Graph.page import Page
 from TrieParser.parser import Parser
 from TrieParser.trie import Trie
+from TrieParser.trie2 import Trie2
 
 
 class HtmlLoader(object):
 
     def __init__(self):
-        self.trie = Trie()
+        self.trie = Trie()      # Only change Trie <-> Trie2 here to test the other class
         self.graph = Graph()
         self.pages = []
         self.dict = {}      # Dictionary is used to keep record of pages, in the format <PageNumber>:<PageName>
@@ -20,10 +21,6 @@ class HtmlLoader(object):
 
     def loadTrieViaHTML(self, path):
         parser = Parser()
-
-        # path koji se unosi ne mora imati duple backslashove.
-        #path = t"C:\Users\Gudli\Desktop\OISISI Drugi projekat\python-2.7.7-docs-html"
-        #path =  "C:\Users\Asus\Desktop\Projekat_Python\python-2.7.7-docs-html"
 
         start = time.time()
         """
