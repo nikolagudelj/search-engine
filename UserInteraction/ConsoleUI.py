@@ -6,9 +6,10 @@ from BasicQuery.BasicParser import BasicParser
 from ComplexQuery.ComplexParser import ComplexParser
 from ComplexQuery.PolishNotation import PolishNotation
 from Misc.Config import Config
-from PageRank.rank import page_rank
+from QueryCheck import NonPYLChecker
+from QueryCheck.BasicQueryChecker import basicChecker
 from TrieParser.HtmlLoader import HtmlLoader
-from QueryCheck.QueryChecker import queryParser, query_array
+from QueryCheck.ComplexQueryChecker import complexChecker, query_array
 
 
 class ConsoleUI(object):
@@ -34,12 +35,18 @@ class ConsoleUI(object):
         while userInput != 'Q':
             query = input("Search (double space for complex query): ")
             if not query.startswith("  "):
-                self.basicParser.parseQuery(query.strip())      # Regular search
+                query = query.strip()
+
+                #try: NonPYLChecker.checkQuery(query)
+                try: basicChecker.parse(Config.adaptQueryForParsing(query))              # Regular search
+                except SyntaxError: continue
+
+                self.basicParser.parseQuery(query)
             else:
                 query = query.strip()                           # If query starts with double space, do a complex search
 
                 query_array.clear()
-                try: queryParser.parse(query)             # Check whether the complex query is logically correct
+                try: complexChecker.parse(query)             # Check whether the complex query is logically correct
                 except SyntaxError: continue
                 Config.removeNones(query_array)           # Create a list from tokens
 

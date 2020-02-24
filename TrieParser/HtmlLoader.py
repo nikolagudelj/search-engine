@@ -11,6 +11,10 @@ from TrieParser.trie2 import Trie2
 
 
 class HtmlLoader(object):
+    """
+        Class which is in charge of everything data-wise. Within its fields, it holds the Trie structure,
+        Graph and a dictionary with every page name linked to a certain page number (later used as ID).
+    """
 
     def __init__(self):
         self.trie = Trie()      # Only change Trie <-> Trie2 here to test the other class
@@ -20,6 +24,11 @@ class HtmlLoader(object):
         self.files = []
 
     def loadTrieViaHTML(self, path):
+        """
+            Collects all the '.html' files from the given path and its subfolders into a list. Then proceeds to
+            call Parser.parse() for each file in the list. Words from every file are then inserted into the Trie
+            structure. After filling the Trie, it creates the Graph structure.
+        """
         parser = Parser()
 
         start = time.time()

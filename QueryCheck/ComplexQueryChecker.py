@@ -88,4 +88,4 @@ def p_error(t):
 
 
 # Building a parser from the above-written rules
-queryParser = yacc.yacc()
+complexChecker = yacc.yacc()

@@ -86,8 +86,35 @@ class Config(object):
 
     @staticmethod
     def removeNones(array):
+        """
+            Iterates through the array and removes every 'None' member from it.
+        """
         index = 0
         for i in array:
             if i is None:
                 array.pop(index)
             index += 1
+
+    @staticmethod
+    def adaptQueryForParsing(query):
+        """
+            Since the BasicQueryChecker only works with logical symbols as operators, we take the inputted query,
+            split it on '\s' characters, and proceed to change operators from {and. or, not} to {&&, ||, !}.
+            This operation does not affect the initial query, which remains untouched.
+            Returned value is a new string query with changed operators.
+                Example:    python not java  ->  python ! java
+        """
+        tokens = query.split(" ")
+        for token in tokens:
+            if token == 'and':
+                token = '&&'
+            elif token == 'or':
+                token = '||'
+            elif token == 'not':
+                token = '!'
+
+        string = ''
+        for token in tokens:
+            string += token
+
+        return string

@@ -8,6 +8,9 @@ from Set.set import Set
 
 
 class BasicParser(object):
+    """
+        Class in charge of parsing the regular/basic query inputted by the user.
+    """
     def __init__(self, loader):
         self.path = Config.inputPath()
         self.loader = loader
@@ -23,8 +26,16 @@ class BasicParser(object):
         """
 
     def parseQuery(self, query):
-        operator_counter = 0
-        token_counter = 0
+        """
+            Parses the given Basic query. Allowed formats are the following:
+                not word
+                word and word
+                word or word
+                word not word
+                words (default operation between all words is 'or')
+
+            Prints ranked pages after calculating the result set.
+        """
         self.pageOccurrences.clear()  # clear the list of any previous queries
 
         tokens = query.split(" ")
@@ -32,33 +43,19 @@ class BasicParser(object):
         self.operator = Operator.OR  # default operator is OR
 
         for token in tokens:
-            token_counter += 1
             if token.lower() == 'and':
-                operator_counter += 1
-                if Config.isGreater(operator_counter, 1) or token_counter == tokens.__len__():
-                    print("Incorrect expression.")
-                    return
                 self.operator = Operator.AND
             elif token.lower() == 'not':
-                operator_counter += 1
-                if Config.isGreater(operator_counter, 1) or token_counter == tokens.__len__():
-                    print("Incorrect expression.")
-                    return
                 self.operator = Operator.NOT
-            elif token.lower() == 'or':
-                operator_counter += 1
-                if Config.isGreater(operator_counter, 1) or token_counter == tokens.__len__():
-                    print("Incorrect expression.")
-                    return
-            else:
+            elif token.lower() != 'or':
                 if self.operator != Operator.NOT:
                     words.add(token)
                 pages = self.loader.trie.findContainingPages(token.lower())
                 _set = arrayToSet(self.loader, pages)
                 self.pageOccurrences.append(_set)
         result_set = self.executeQuery()
-        result_set.print_set()
-        ranks = page_rank(30, self.loader.pages, self.loader.graph, self.loader, words, result_set)
+
+        ranks = page_rank(5, self.loader.pages, self.loader.graph, self.loader, words, result_set)
         Config.print_ranks(ranks)
 
     def executeQuery(self):
