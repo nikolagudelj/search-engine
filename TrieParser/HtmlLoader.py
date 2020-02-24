@@ -39,7 +39,7 @@ class HtmlLoader(object):
 
             parser.parse(file)                      # Parse the page at the given path
 
-            page = Page(file, parser.links)         # Create a new Page object to be used for Graphing
+            page = Page(file, parser.links, len(parser.words))         # Create a new Page object to be used for Graphing
             self.pages.append(page)
 
             for word in parser.words:                   # Insert every word from the page into Trie

@@ -4,6 +4,7 @@ from BasicQuery.Operator import Operator
 from Misc.Config import Config
 from PageRank.rank import page_rank
 from Set.set import arrayToSet
+from Set.set import Set
 
 class BasicParser(object):
     def __init__(self, loader):
@@ -26,7 +27,7 @@ class BasicParser(object):
         self.pageOccurrences.clear()  # clear the list of any previous queries
 
         tokens = query.split(" ")
-        words = []
+        words = Set()
         self.operator = Operator.OR  # default operator is OR
 
         for token in tokens:
@@ -49,14 +50,15 @@ class BasicParser(object):
                     print("Incorrect expression.")
                     return
             else:
-                words.append(token)
+                if self.operator != Operator.NOT:
+                    words.add(token)
                 pages = self.loader.trie.findContainingPages(token.lower())
                 _set = arrayToSet(self.loader, pages)
                 self.pageOccurrences.append(_set)
         result_set = self.executeQuery()
         result_set.print_set()
-        #ranks = page_rank(5, self.htmlLoader.pages, self.htmlLoader.graph, self.htmlLoader, words, result_set)
-        #Config.print_ranks(ranks)
+        ranks = page_rank(30, self.loader.pages, self.loader.graph, self.loader, words, result_set)
+        Config.print_ranks(ranks)
 
     def executeQuery(self):
         """

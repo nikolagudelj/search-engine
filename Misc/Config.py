@@ -6,7 +6,9 @@ class Config(object):
     @staticmethod
     def print_ranks(ranks):
         """
-            Comment missing.
+            This method takes a list of pairs [page_path, page_rank] and allows the user to choose how many
+            pages they would like to display at a time. If the desired number of pages exceeds the number of pages
+            in the result set, all of the pages will be displayed.
         """
         i = len(ranks) - 1
         rem = len(ranks)
@@ -14,7 +16,7 @@ class Config(object):
         num_of_pages = 0
         while True:
             try:
-                num_of_pages = int(input("Enter the number of pages you would like to display: "))
+                num_of_pages = int(input("Enter the number of pages you would like to display (0 for exit): "))
                 break
             except Exception:
                 print("Please enter an integer!")
