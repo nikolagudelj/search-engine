@@ -12,7 +12,7 @@ class ComplexParser(object):
         PolishNotation.
         Correct format example is:
             python && java || ( clojure && ! sql )
-                ~ Spaces between tokens are necessary.
+                ~ Spaces between tokens are not necessary.
     """
 
     def __init__(self, loader):
@@ -26,9 +26,9 @@ class ComplexParser(object):
             Operator tokens need to behave according to the algorithm rules, which are defined in the pushOperator()
             function. After the function, self.output contains an array-like expression in Reverse-Polish form.
         """
-        query = Config.removeTrailingOperators(query)
-        tokens = query.split(" ")
-        for token in tokens:
+        self.output.clear()
+
+        for token in query:
             if not isOperator(token):
                 _list = self.loader.trie.findContainingPages(token)
                 _set = arrayToSet(self.loader, _list)
@@ -37,7 +37,7 @@ class ComplexParser(object):
                 self.pushOperator(token)
 
         for index in reversed(range(self.stack.__len__())):
-            self.output.append(self.stack[index])
+            self.output.append(self.stack.pop(index))
 
     def pushOperator(self, operator):
         """

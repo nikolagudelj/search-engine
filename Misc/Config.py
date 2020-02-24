@@ -81,3 +81,11 @@ class Config(object):
         """ Checks whether the first integer argument is greater than the second. Returns boolean value. """
         if num > limit: return True
         return False
+
+    @staticmethod
+    def removeNones(array):
+        index = 0
+        for i in array:
+            if i is None:
+                array.pop(index)
+            index += 1

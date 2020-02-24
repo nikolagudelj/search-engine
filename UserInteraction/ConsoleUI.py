@@ -3,13 +3,13 @@ __author__ = "Nikola"
 import sys
 
 from BasicQuery.BasicParser import BasicParser
-from Misc.Config import Config
 from ComplexQuery.ComplexParser import ComplexParser
 from ComplexQuery.PolishNotation import PolishNotation
+from Misc.Config import Config
 from PageRank.rank import page_rank
-from Set.set import arrayToSet
 from TrieParser.HtmlLoader import HtmlLoader
 from TrieParser.trie import Trie
+from QueryCheck.QueryChecker import queryParser, query_array
 
 
 class ConsoleUI(object):
@@ -37,9 +37,16 @@ class ConsoleUI(object):
             if not query.startswith("  "):
                 self.basicParser.parseQuery(query.strip())      # Regular search
             else:
-                self.complexParser.parseQuery(query.strip())  # If query starts with double space, do a complex search
+                query = query.strip()                           # If query starts with double space, do a complex search
+
+                query_array.clear()
+                try: queryParser.parse(query)             # Check whether the complex query is logically correct
+                except SyntaxError: continue
+                Config.removeNones(query_array)           # Create a list from tokens
+
+                self.complexParser.parseQuery(query_array)      # Pass that list to ComplexParser object
                 _resultSet = self.polishCalculator.calculateResultSet(self.complexParser.output)
-                if _resultSet != -1:
+                if _resultSet.set:
                     _resultSet.print_set()
                 else:
                     print("No resulting set available.")
