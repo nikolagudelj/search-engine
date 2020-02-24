@@ -58,11 +58,6 @@ class HtmlLoader(object):
         end = time.time()
         print("Parsed files, loaded Trie and formed a Graph in  " + str((end - start).__round__(2)) + " seconds.")
 
-    def getDictionary(self):
-        return self.dict
-
-    def getGraph(self):
-        return self.graph
 
     " Returns a page name corresponding to the page number which is passed as a parameter. "
     def getPageName(self, pageNum):

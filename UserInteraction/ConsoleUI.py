@@ -8,14 +8,13 @@ from ComplexQuery.PolishNotation import PolishNotation
 from Misc.Config import Config
 from PageRank.rank import page_rank
 from TrieParser.HtmlLoader import HtmlLoader
-from TrieParser.trie import Trie
 from QueryCheck.QueryChecker import queryParser, query_array
 
 
 class ConsoleUI(object):
     """
         Console script which is used as a UI.
-        On initialization, it loads calls the loading functions from Trie/HtmlLoader/Graph.
+        On initialization, it calls the loading functions from Trie/HtmlLoader/Graph.
         After the initialization, it allows the user to run different search methods from the terminal.
     """
 
@@ -45,7 +44,7 @@ class ConsoleUI(object):
                 Config.removeNones(query_array)           # Create a list from tokens
 
                 self.complexParser.parseQuery(query_array)      # Pass that list to ComplexParser object
-                _resultSet = self.polishCalculator.calculateResultSet(self.complexParser.output)
+                _resultSet = self.polishCalculator.calculateResultSet(self.complexParser.output)    # Calculate result
                 if _resultSet.set:
                     _resultSet.print_set()
                 else:

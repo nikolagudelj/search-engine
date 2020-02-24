@@ -5,11 +5,12 @@ from Misc.Config import Config
 from PageRank.rank import page_rank
 from Set.set import arrayToSet
 
+
 class BasicParser(object):
     def __init__(self, loader):
         self.path = Config.inputPath()
-        print("Loading HTML files...")
         self.loader = loader
+        print("Loading HTML files...")
         self.loader.loadTrieViaHTML(self.path)
         self.operator = -1
 

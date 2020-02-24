@@ -1,3 +1,5 @@
+__author__ = "Nikola"
+
 import ply.lex as lex
 import ply.yacc as yacc
 
@@ -15,7 +17,7 @@ t_OR = r'\|\|'
 t_NOT = r'\!'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
-t_WORD = r'[a-zA-Z0-9_@]+'
+t_WORD = r'[a-zA-Z0-9_@]+'      # Allowed characters for search word tokens
 
 
 # Ignores spaces
@@ -34,7 +36,8 @@ lexer = lex.lex()
 
 # GRAMMAR RULES
 
-query_array = []
+query_array = []        # Used to keep tokens from search
+                        # !python || java -> [!, python, ||, java]
 
 
 def p_query(t):
@@ -50,17 +53,20 @@ def p_operand(t):
     """
     query_array.append(t.slice[-1].value)
 
+
 def p_lparen(t):
     """
         _LPAREN : LPAREN
     """
     query_array.append(t.slice[-1].value)
 
+
 def p_rparen(t):
     """
         _RPAREN : RPAREN
     """
     query_array.append(t.slice[-1].value)
+
 
 def p_expression_unop(t):
     """ UNARY :

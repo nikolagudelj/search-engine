@@ -1,13 +1,12 @@
 __author__ = "Nikola"
 
 from ComplexQuery.PolishNotation import isOperator
-from Misc.Config import Config
 from Set.set import arrayToSet
 
 
 class ComplexParser(object):
     """
-        Parser used to parse a given complex query string, and turn it into a set-contained Polish notation array.
+        Parser used to parse a given complex query array, and turn it into a set-contained Polish notation array.
         Resulting polish-notation array is then used to calculate the resulting set, using the class
         PolishNotation.
         Correct format example is:
