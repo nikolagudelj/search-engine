@@ -119,5 +119,4 @@ class Config(object):
         for token in tokens:
             string += (token + " ")
 
-        print(string)
         return string.strip()

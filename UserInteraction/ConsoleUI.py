@@ -1,7 +1,5 @@
 __author__ = "Nikola"
 
-import sys
-
 from BasicQuery.BasicParser import BasicParser
 from ComplexQuery.ComplexParser import ComplexParser
 from ComplexQuery.PolishNotation import PolishNotation
@@ -38,6 +36,7 @@ class ConsoleUI(object):
 
         while userInput != 'Q':
             query = input("Search (double space for complex query): ")
+            query = query.lower()
             if not query.startswith("  "):
                 query = query.strip()
 
