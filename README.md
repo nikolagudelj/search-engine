@@ -60,7 +60,7 @@ Nakon pretrage skupa svih stranica, dobijamo rezultujući set stranica, koje isp
 </p>
 <br>
 <p>
-  Python interpreter Version 3.8
-  pip Version 19.2.3
+  Python interpreter Version 3.8<br>
+  pip Version 19.2.3<br>
   setuptools Version 41.2.0
 </p>
