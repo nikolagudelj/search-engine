@@ -7,13 +7,13 @@ Program za pretragu 'reči u '.html' fajlovima u okviru određenog direktorijuma
 <h4>
   
 <h3>
-<b>Pokretanje</b><br></h3>
+<b>Pokretanje</b></h3>
 <p>
 Klasa *ConsoleUI* sadrži u sebi sve komponente neophodne za efikasno pokretanje programa. 
 Poziv metode *ConsoleUI.start()* startuje program. 
 Neophodno je uneti korektnu putanju do direktorijuma. <br><br>
 </p>
-<h3><b>Učitavanje</b></h3><br>
+<h3><b>Učitavanje</b></h3>
  
 <p>
 Nakon unosa, poziva se metoda <i>HtmlLoader.getHtmlFiles()</i>, koja prolazi rekurzivno kroz ceo dati direktorijum, i u zasebnu listu odvaja putanje do svakog pojedinačnog <i>.html</i> fajla. Kada su svi fajlovi učitani, poziva se metoda <i?Parser.parse()</i>, koja parsira svaki fajl iz liste, i njegove reči ubacuje u strukturu <b>Trie</b>. 
@@ -57,4 +57,10 @@ Nakon unetog querija, pozivaju se odgovarajuće klase za logičku proveru korekt
   <br><a href="https://www.dabeaz.com/ply/"> Link za zvanicnu stranicu PYL parsera </a><br>
 <br>
 Nakon pretrage skupa svih stranica, dobijamo rezultujući set stranica, koje ispunjavaju uslove pretrage. Pre nego što ih ispišemo u terminalu, pozivamo metodu za <i>rangiranje</i> datih stranica, tako da najrelevantnije stranice, sa najvećim rezultatom operacije <code>rank</code> budu istaknute na vrhu pretrage, dok su one slabije rangirane pri dnu.
+</p>
+<br>
+<p>
+  Python interpreter Version 3.8
+  pip Version 19.2.3
+  setuptools Version 41.2.0
 </p>
