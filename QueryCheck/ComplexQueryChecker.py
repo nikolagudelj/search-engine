@@ -55,15 +55,13 @@ def p_operand(t):
 
 
 def p_lparen(t):
-    """
-        _LPAREN : LPAREN
+    """ _LPAREN : LPAREN
     """
     query_array.append(t.slice[-1].value)
 
 
 def p_rparen(t):
-    """
-        _RPAREN : RPAREN
+    """ _RPAREN : RPAREN
     """
     query_array.append(t.slice[-1].value)
 

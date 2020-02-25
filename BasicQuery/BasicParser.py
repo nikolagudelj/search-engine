@@ -12,18 +12,12 @@ class BasicParser(object):
         Class in charge of parsing the regular/basic query inputted by the user.
     """
     def __init__(self, loader):
-        self.path = Config.inputPath()
         self.loader = loader
-        print("Loading HTML files...")
-        self.loader.loadTrieViaHTML(self.path)
         self.operator = -1
-
         self.pageOccurrences = []
-        """ 
-           pageOccurrences keeps a reference to every Trie.pages[] array that trie.findContainingPages() returns.
-           During filtering, we cycle through all the Trie.pages[] arrays it contains.
-           1 array == 1 search word
-        """
+        """ pageOccurrences keeps a reference to every Trie.pages[] array that trie.findContainingPages() returns.
+            During filtering, we cycle through all the Trie.pages[] arrays it contains.
+            1 array == 1 search word  """
 
     def parseQuery(self, query):
         """

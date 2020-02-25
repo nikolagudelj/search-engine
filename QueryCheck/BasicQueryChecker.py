@@ -40,6 +40,11 @@ def t_error(t):
 lexer = lex.lex()
 
 
+def p_input(t):
+    """ INPUT : QUERY
+    """
+
+
 def p_query(t):
     """
         QUERY :  _WORDS

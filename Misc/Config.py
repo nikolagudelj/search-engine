@@ -105,16 +105,19 @@ class Config(object):
                 Example:    python not java  ->  python ! java
         """
         tokens = query.split(" ")
+        i = 0
         for token in tokens:
             if token == 'and':
-                token = '&&'
+                tokens[i] = '&&'
             elif token == 'or':
-                token = '||'
+                tokens[i] = '||'
             elif token == 'not':
-                token = '!'
+                tokens[i] = '!'
+            i += 1
 
         string = ''
         for token in tokens:
-            string += token
+            string += (token + " ")
 
-        return string
+        print(string)
+        return string.strip()

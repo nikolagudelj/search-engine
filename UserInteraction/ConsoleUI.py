@@ -25,6 +25,10 @@ class ConsoleUI(object):
         self.basicParser = BasicParser(self.loader)
         self.polishCalculator = PolishNotation(self.loader)
 
+        self.path = Config.inputPath()
+        print("Loading HTML files...")              # Ask user for path to directory, and load structures after input.
+        self.loader.loadTrieViaHTML(self.path)
+
     def start(self):
         """
             Starts an infinite loop, taking input from user, and calling the Complex/Basic parser (input dependent)
