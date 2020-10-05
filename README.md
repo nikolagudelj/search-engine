@@ -14,7 +14,7 @@
 
 ## Search
 After all the ```.html``` files have been read and parsed into data structures, the user can perform search queries. A query can be ```Basic``` or ```Complex```.
-* Basic query
+* <a href="https://github.com/nikolagudelj/search-engine/blob/master/BasicQuery/BasicParser.py">Basic query</a>
   * Contains a maximum of 1 operation. 
   * Operations are: ```and```, ```or```, ```not```.
   * Examples: 
@@ -24,7 +24,7 @@ After all the ```.html``` files have been read and parsed into data structures, 
       * This will return a list of all ```.html``` files which do **not** contain the word *python*
     * *python java kotlin sql*
       * When querying without operators, we can use any number of words, and the default operator is ```or```
-* Complex query
+* <a href="https://github.com/nikolagudelj/search-engine/blob/master/ComplexQuery/ComplexParser.py">Complex query</a>
   * Supports complex logical expressions for more elaborate queries.
   * Allowed operators are ```!```, ```()```, ```||```, ```&&```
   * Examples:
